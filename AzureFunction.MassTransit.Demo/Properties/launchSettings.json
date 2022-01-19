@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AzureFunction.MassTransit.Asb.Demo": {
+      "commandName": "Project",
+      "commandLineArgs": "--p 7075"
+    }
+  }
+}
