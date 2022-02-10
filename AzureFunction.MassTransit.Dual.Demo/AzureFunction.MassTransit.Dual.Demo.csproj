@@ -4,6 +4,7 @@
 		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
 		<NoWarn>CS0618,CS1998,CS1591</NoWarn>
 		<UserSecretsId>7d178db6-669a-42f4-91b9-081ae7115645</UserSecretsId>
+		<Configurations>Debug;Release;LocalDev</Configurations>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='LocalDev'">
 		<DefineConstants>$(DefineConstants);LOCALDEV</DefineConstants>
