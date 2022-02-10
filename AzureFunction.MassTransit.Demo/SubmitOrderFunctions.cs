@@ -1,16 +1,16 @@
 using System.Threading;
 using System.Threading.Tasks;
-using MassTransit.WebJobs.ServiceBusIntegration;
 using Microsoft.Azure.WebJobs;
 using AzureFunction.MassTransit.Demo.Consumers;
+
+using MassTransit.WebJobs.ServiceBusIntegration;
 using Azure.Messaging.ServiceBus;
 
 namespace AzureFunction.MassTransit.Demo
 {
     public class SubmitOrderFunctions
     {
-        const string SubmitOrderTopicName = "conferences";
-        const string SubmitOrderSubscriptionName = "mysubscription";
+        const string OrdersTopicName = "Orders";
         readonly IMessageReceiver _receiver;
 
         public SubmitOrderFunctions(IMessageReceiver receiver)
@@ -20,13 +20,12 @@ namespace AzureFunction.MassTransit.Demo
 
         [FunctionName("SubmitOrder")]
         public Task SubmitOrderAsync(
-            [ServiceBusTrigger(SubmitOrderTopicName, SubmitOrderSubscriptionName)]
+            [ServiceBusTrigger(OrdersTopicName)]
             ServiceBusReceivedMessage message,
             CancellationToken cancellationToken)
         {
             return _receiver.HandleConsumer<SubmitOrderConsumer>(
-                SubmitOrderTopicName,
-                SubmitOrderSubscriptionName,
+                OrdersTopicName,
                 message,
                 cancellationToken);
         }

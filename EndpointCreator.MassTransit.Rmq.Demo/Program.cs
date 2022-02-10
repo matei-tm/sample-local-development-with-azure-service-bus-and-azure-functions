@@ -22,7 +22,7 @@ namespace EndpointCreator.Mt2Rmq.Demo
                 {
                     services.AddMassTransit(x =>
                     {
-                        x.AddConsumer<MessageConsumer>();
+                        x.AddConsumer<OrdersConsumer>();
 
                         x.UsingRabbitMq((context, cfg) =>
                         {

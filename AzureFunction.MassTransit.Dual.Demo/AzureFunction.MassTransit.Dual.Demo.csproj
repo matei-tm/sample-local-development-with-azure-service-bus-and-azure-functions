@@ -5,17 +5,32 @@
 		<NoWarn>CS0618,CS1998,CS1591</NoWarn>
 		<UserSecretsId>7d178db6-669a-42f4-91b9-081ae7115645</UserSecretsId>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='LocalDev'">
+		<DefineConstants>$(DefineConstants);LOCALDEV</DefineConstants>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
 
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\MassTransit\src\MassTransit\MassTransit.csproj" />
-	  <ProjectReference Include="..\..\MassTransit\src\Transports\MassTransit.WebJobs.RabbitMqIntegration\MassTransit.WebJobs.RabbitMqIntegration.csproj" />
+	  <ProjectReference Include="..\..\MassTransit\src\MassTransit\MassTransit.csproj" />		
 	  <ProjectReference Include="..\AzureFunction.MassTransit.Demo.Core\AzureFunction.MassTransit.Demo.Core.csproj" />
 	  <ProjectReference Include="..\HeroDomain.Contracts\HeroDomain.Contracts.csproj" />
 	</ItemGroup>
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('LOCALDEV'))">
+			<ItemGroup>
+				<ProjectReference Include="..\..\MassTransit\src\Transports\MassTransit.WebJobs.RabbitMqIntegration\MassTransit.WebJobs.RabbitMqIntegration.csproj" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<ProjectReference Include="..\..\MassTransit\src\Transports\MassTransit.WebJobs.ServiceBusIntegration\MassTransit.WebJobs.ServiceBusIntegration.csproj" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+	
 	<ItemGroup>
 		<None Update="host.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

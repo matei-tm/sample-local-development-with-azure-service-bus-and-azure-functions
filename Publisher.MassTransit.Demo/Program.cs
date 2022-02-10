@@ -24,7 +24,7 @@ namespace Publisher.Mt2Asb.Demo
                         {
                             cfg.ConfigureEndpoints(context);
                             cfg.Host("Endpoint=sb://dmsb01.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=QKaf4xsgV2jvzKjyURf7x84ecy/wuUU2LOvVH36QzJ4=");
-                            var errorHandlingDemoTopic = "conferences";
+                            var errorHandlingDemoTopic = "orders";
 
                             cfg.Message<IOrder>(configTopology => configTopology.SetEntityName(errorHandlingDemoTopic));
                         });
