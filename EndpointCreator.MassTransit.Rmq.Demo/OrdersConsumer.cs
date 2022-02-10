@@ -5,12 +5,12 @@ using HeroDomain.Contracts;
 
 namespace EndpointCreator.Mt2Rmq.Demo
 {
-    public class OrdersConsumer :
+    public class Orders_DemoConsumer :
     IConsumer<IOrder>
     {
-        readonly ILogger<OrdersConsumer> _logger;
+        readonly ILogger<Orders_DemoConsumer> _logger;
 
-        public OrdersConsumer(ILogger<OrdersConsumer> logger)
+        public Orders_DemoConsumer(ILogger<Orders_DemoConsumer> logger)
         {
             _logger = logger;
         }

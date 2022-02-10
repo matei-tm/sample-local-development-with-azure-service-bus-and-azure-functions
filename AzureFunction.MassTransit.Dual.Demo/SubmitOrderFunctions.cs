@@ -15,8 +15,9 @@ namespace AzureFunction.MassTransit.Demo
 {
     public class SubmitOrderFunctions
     {
-        const string OrdersTopicName = "orders";
-        readonly IMessageReceiver _receiver;
+        const string OrdersTopicName = "Orders";
+        const string OrdersSubscriptionName = "Demo";
+            readonly IMessageReceiver _receiver;
 
         public SubmitOrderFunctions(IMessageReceiver receiver)
         {
@@ -27,17 +28,17 @@ namespace AzureFunction.MassTransit.Demo
         public Task SubmitOrderAsync(
 
 #if LOCALDEV
-            [RabbitMQTrigger(OrdersTopicName)]
+            [RabbitMQTrigger(OrdersTopicName, OrdersSubscriptionName)]
             BasicDeliverEventArgs message,
 #else
-            [ServiceBusTrigger(OrdersTopicName, "democonsumer")]
+            [ServiceBusTrigger(OrdersTopicName, OrdersSubscriptionName)]
             ServiceBusReceivedMessage message,
 #endif
 
             CancellationToken cancellationToken)
         {
             return _receiver.HandleConsumer<SubmitOrderConsumer>(
-                OrdersTopicName, "democonsumer",
+                OrdersTopicName, OrdersSubscriptionName,
                 message,
                 cancellationToken);
         }
