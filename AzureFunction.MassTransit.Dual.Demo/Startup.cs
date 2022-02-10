@@ -16,8 +16,9 @@ namespace AzureFunction.MassTransit.Demo
             builder.Services
                 .AddScoped<SubmitOrderFunctions>()
                 .AddMassTransitForAzureFunctions(
-                cfg => {
-                    cfg.AddConsumersFromNamespaceContaining<ConsumerNamespace>(); 
+                cfg =>
+                {
+                    cfg.AddConsumersFromNamespaceContaining<ConsumerNamespace>();
                 });
         }
     }
