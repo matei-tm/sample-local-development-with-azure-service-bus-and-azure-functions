@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using HeroDomain.Contracts;
 
-namespace Publisher.Mt2Rmq.Demo
+namespace EndpointCreator.Mt2Rmq.Demo
 {
     public class MessageConsumer :
     IConsumer<IOrder>

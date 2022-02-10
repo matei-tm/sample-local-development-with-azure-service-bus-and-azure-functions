@@ -3,8 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MassTransit;
 using Publisher.MassTransit.Demo.Core;
+using System.Threading;
+using System.Threading.Tasks;
+using System;
 
-namespace Publisher.Mt2Rmq.Demo
+namespace EndpointCreator.Mt2Rmq.Demo
 {
     public class Program
     {
@@ -19,6 +22,8 @@ namespace Publisher.Mt2Rmq.Demo
                 {
                     services.AddMassTransit(x =>
                     {
+                        x.AddConsumer<MessageConsumer>();
+
                         x.UsingRabbitMq((context, cfg) =>
                         {
                             cfg.Host("localhost", "/", "RabbitMQ",
@@ -28,19 +33,27 @@ namespace Publisher.Mt2Rmq.Demo
                                 {
                                     h.Username("guest");
                                     h.Password("guest");
-                                    
+
                                 }
 
                             );
-
-                            cfg.ConfigureEndpoints(context);                         
+                            cfg.ConfigureEndpoints(context);
 
                         });
-                       
                     });
                     services.AddMassTransitHostedService();
 
                     services.AddHostedService<Worker>();
                 });
+    }
+
+    public class Worker : BackgroundService
+    {
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            Console.WriteLine("The program exited");
+
+            await Task.CompletedTask;
+        }
     }
 }

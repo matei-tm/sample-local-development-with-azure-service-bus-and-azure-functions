@@ -17,7 +17,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeroDomain.Contracts", "Her
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MassTransit.WebJobs.RabbitMqIntegration", "..\MassTransit\src\Transports\MassTransit.WebJobs.RabbitMqIntegration\MassTransit.WebJobs.RabbitMqIntegration.csproj", "{9D2E3DC1-B233-4930-A8D8-972BD41D5533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Publisher.MassTransit.Demo.Core", "Publisher.MassTransit.Demo.Core\Publisher.MassTransit.Demo.Core.csproj", "{85BF3F77-E1E3-470E-920D-E216D650A314}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Publisher.MassTransit.Demo.Core", "Publisher.MassTransit.Demo.Core\Publisher.MassTransit.Demo.Core.csproj", "{85BF3F77-E1E3-470E-920D-E216D650A314}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MassTransit.WebJobs.ServiceBusIntegration", "..\MassTransit\src\Transports\MassTransit.WebJobs.ServiceBusIntegration\MassTransit.WebJobs.ServiceBusIntegration.csproj", "{BCDB7D23-137C-46D8-850B-D82E1B4A187C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DFE59B64-B02F-4701-94D0-BEC424E02B8C}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EndpointCreator.Mt2Rmq.Demo", "EndpointCreator.MassTransit.Rmq.Demo\EndpointCreator.Mt2Rmq.Demo.csproj", "{40CF80F6-3247-417D-9C4B-0688B1F0BF9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +66,14 @@ Global
 		{85BF3F77-E1E3-470E-920D-E216D650A314}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85BF3F77-E1E3-470E-920D-E216D650A314}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85BF3F77-E1E3-470E-920D-E216D650A314}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCDB7D23-137C-46D8-850B-D82E1B4A187C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCDB7D23-137C-46D8-850B-D82E1B4A187C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCDB7D23-137C-46D8-850B-D82E1B4A187C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCDB7D23-137C-46D8-850B-D82E1B4A187C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40CF80F6-3247-417D-9C4B-0688B1F0BF9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40CF80F6-3247-417D-9C4B-0688B1F0BF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40CF80F6-3247-417D-9C4B-0688B1F0BF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40CF80F6-3247-417D-9C4B-0688B1F0BF9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
