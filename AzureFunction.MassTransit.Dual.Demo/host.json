@@ -15,7 +15,7 @@
     "RabbitMQ": {
       "prefetchCount": 100,
       "queueName": "conferences",
-      "connectionString": "amqp://guest:guest@127.0.0.1:5672",
+      "connectionString": "amqp://guest:guest@host.docker.internal:5672",
       "port": 10
     }
   }

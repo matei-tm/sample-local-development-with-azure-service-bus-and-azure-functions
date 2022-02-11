@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using AzureFunction.MassTransit.Demo.Consumers;
 
+
 #if LOCALDEV
 using MassTransit.WebJobs.RabbitMqIntegration;
 using RabbitMQ.Client.Events;
 #else
 using MassTransit.WebJobs.ServiceBusIntegration;
-using Azure.Messaging.ServiceBus;
+using Microsoft.Azure.ServiceBus;
 #endif
 
 namespace AzureFunction.MassTransit.Demo
@@ -28,11 +29,11 @@ namespace AzureFunction.MassTransit.Demo
         public Task SubmitOrderAsync(
 
 #if LOCALDEV
-            [RabbitMQTrigger(OrdersTopicName, OrdersSubscriptionName)]
+            [RabbitMQTrigger(OrdersTopicName, OrdersSubscriptionName, ConnectionStringSetting = "RabbitMQ")]
             BasicDeliverEventArgs message,
 #else
-            [ServiceBusTrigger(OrdersTopicName, OrdersSubscriptionName)]
-            ServiceBusReceivedMessage message,
+            [ServiceBusTrigger(OrdersTopicName, OrdersSubscriptionName, Connection = "AzureWebJobsServiceBus")]
+            Message message,
 #endif
 
             CancellationToken cancellationToken)
