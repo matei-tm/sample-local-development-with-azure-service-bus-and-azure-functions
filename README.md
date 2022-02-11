@@ -19,7 +19,8 @@
 
 - [Jimmy Bogard - Local Development with Azure Service Bus](https://jimmybogard.com/local-development-with-azure-service-bus/)
 - [Chris Patterson - Modern .NET Messaging using MassTransit](https://www.youtube.com/watch?v=jQNQDLv7QmU)
-
+- [MassTransit Webjobs with RabbitMq](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
+- [MassTransit Demo app](https://github.com/matei-tm-csv/AzureFunction.Demo/tree/develop)
 
 # Local machine setup
 
