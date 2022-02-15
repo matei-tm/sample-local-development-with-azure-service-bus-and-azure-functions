@@ -1,4 +1,5 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS installer-env
+ARG servicebusmode=LocalDev
 
 # Build requires 3.1 SDK
 COPY --from=mcr.microsoft.com/dotnet/core/sdk:3.1 /usr/share/dotnet /usr/share/dotnet
@@ -6,7 +7,7 @@ COPY --from=mcr.microsoft.com/dotnet/core/sdk:3.1 /usr/share/dotnet /usr/share/d
 COPY . /src/dotnet-function-app
 RUN cd /src/dotnet-function-app/AzureFunction.Demo/AzureFunction.MassTransit.Dual.Demo && \
     mkdir -p /home/site/wwwroot && \
-    dotnet publish *.csproj --output /home/site/wwwroot --configuration LocalDev
+    dotnet publish *.csproj --output /home/site/wwwroot --configuration $servicebusmode
 
 # To enable ssh & remote debugging on app service change the base image to the one below
 # FROM mcr.microsoft.com/azure-functions/dotnet:3.0-appservice
