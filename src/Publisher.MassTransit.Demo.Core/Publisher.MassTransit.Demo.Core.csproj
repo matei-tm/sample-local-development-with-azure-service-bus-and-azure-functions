@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;LocalDev</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HeroDomain.Contracts\HeroDomain.Contracts.csproj" />
+    <ProjectReference Include="..\submodules\MassTransit\src\MassTransit\MassTransit.csproj" />
+  </ItemGroup>
+
+</Project>

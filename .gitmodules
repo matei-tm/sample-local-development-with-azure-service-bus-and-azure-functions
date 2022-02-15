@@ -1,0 +1,4 @@
+[submodule "src/submodules/MassTransit"]
+	path = src/submodules/MassTransit
+	url = https://github.com/matei-tm/MassTransit.git
+
