@@ -14,8 +14,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Publisher.MassTransit.Demo.Core\Publisher.MassTransit.Demo.Core.csproj" />
-    <!--<ProjectReference Include="..\submodules\MassTransit\src\Containers\MassTransit.AspNetCoreIntegration\MassTransit.AspNetCoreIntegration.csproj" />
-    <ProjectReference Include="..\submodules\MassTransit\src\Containers\MassTransit.ExtensionsDependencyInjectionIntegration\MassTransit.ExtensionsDependencyInjectionIntegration.csproj" />
-    <ProjectReference Include="..\submodules\MassTransit\src\Transports\MassTransit.Azure.ServiceBus.Core\MassTransit.Azure.ServiceBus.Core.csproj" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.*.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </None>
   </ItemGroup>
 </Project>

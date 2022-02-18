@@ -1,4 +1,4 @@
-
+﻿
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MassTransit;
@@ -20,7 +20,7 @@ namespace EndpointCreator.Mt2Rmq.Demo
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    
+
                     services.AddMassTransit(x =>
                     {
                         x.AddConsumer<OrdersTopicConsumer>();

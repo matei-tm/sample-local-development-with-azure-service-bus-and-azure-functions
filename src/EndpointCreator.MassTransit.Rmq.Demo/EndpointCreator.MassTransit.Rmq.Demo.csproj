@@ -27,4 +27,10 @@
     <ProjectReference Include="..\HeroDomain.Contracts\HeroDomain.Contracts.csproj" />
     <ProjectReference Include="..\Publisher.MassTransit.Demo.Core\Publisher.MassTransit.Demo.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.*.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </None>
+  </ItemGroup>
 </Project>
