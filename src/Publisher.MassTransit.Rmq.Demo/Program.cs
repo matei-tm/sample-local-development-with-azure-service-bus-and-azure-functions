@@ -22,8 +22,18 @@ namespace Publisher.Mt2Rmq.Demo
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
+                    var devEnvironmentVariable = hostingContext.HostingEnvironment.EnvironmentName;
+                    var isDevelopment = string.IsNullOrEmpty(devEnvironmentVariable) ||
+                                devEnvironmentVariable.ToLower() == "development";
+
                     config.AddJsonFile("appsettings.json", optional: true);
+                    config.AddJsonFile($"appsettings.{devEnvironmentVariable}.json", optional: true);
                     config.AddEnvironmentVariables();
+
+                    if (isDevelopment)
+                    {
+                        config.AddUserSecrets<Program>();
+                    }
 
                     if (args != null)
                         config.AddCommandLine(args);
@@ -39,6 +49,8 @@ namespace Publisher.Mt2Rmq.Demo
                     services.AddMassTransitHostedService();
 
                     services.AddHostedService<Worker>();
+
+                    services.AddApplicationInsightsTelemetryWorkerService();
                 });
 
         private static IBusControl ConfigureBus(IBusRegistrationContext context)
