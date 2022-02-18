@@ -165,6 +165,7 @@ dotnet_diagnostic.IDE0044.severity = warning
 
 # RS0016: Only enable if API files are present
 dotnet_public_api_analyzer.require_api_files = true
+end_of_line=lf
 
 # CSharp code style settings:
 [*.cs]
