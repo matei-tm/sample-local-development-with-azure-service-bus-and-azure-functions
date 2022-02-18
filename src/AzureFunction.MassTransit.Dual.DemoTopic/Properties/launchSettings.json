@@ -2,7 +2,7 @@
   "profiles": {
     "AzureFunction.MassTransit.Rmq.Demo": {
       "commandName": "Project",
-      "commandLineArgs": "--p 7074"
+      "commandLineArgs": "--p 7075"
     }
   }
 }
