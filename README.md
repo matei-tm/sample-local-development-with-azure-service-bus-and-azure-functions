@@ -1,4 +1,11 @@
 - [References](#references)
+  - [Nice to read](#nice-to-read)
+- [Azure Setup](#azure-setup)
+  - [Create a service bus](#create-a-service-bus)
+    - [Create a queue OrdersQueue](#create-a-queue-ordersqueue)
+    - [Create a topic OrdersTopic](#create-a-topic-orderstopic)
+    - [Create OrdersSubscription subscription for OrdersTopic](#create-orderssubscription-subscription-for-orderstopic)
+  - [Create an App Insights resource](#create-an-app-insights-resource)
 - [Local machine setup](#local-machine-setup)
   - [RabbitMq](#rabbitmq)
   - [Switch to Docker context for Kubernetes](#switch-to-docker-context-for-kubernetes)
@@ -22,14 +29,31 @@
 - [MassTransit Webjobs with RabbitMq](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
 - [MassTransit Demo app](https://github.com/matei-tm-csv/AzureFunction.Demo/tree/develop)
 
+## Nice to read
+
+- [Application Insights for Worker Service applications](https://docs.microsoft.com/en-us/azure/azure-monitor/app/worker-service)
+
+# Azure Setup
+
+## Create a service bus
+
+### Create a queue OrdersQueue
+### Create a topic OrdersTopic
+### Create OrdersSubscription subscription for OrdersTopic
+
+## Create an App Insights resource
+
+
+
 # Local machine setup
 
 ## RabbitMq
 
+Create a RabbitMq container
+
 ```
 docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 -p 5672:5672 rabbitmq:3-management
 ```
-
 
 ## Switch to Docker context for Kubernetes
 
