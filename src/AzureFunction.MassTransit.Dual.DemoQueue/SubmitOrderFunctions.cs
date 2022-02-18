@@ -1,3 +1,4 @@
+﻿
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -17,7 +18,7 @@ namespace AzureFunction.MassTransit.Demo
     public class SubmitOrderFunctions
     {
         const string OrdersQueueName = "OrdersQueue";
-            readonly IMessageReceiver _receiver;
+        readonly IMessageReceiver _receiver;
 
         public SubmitOrderFunctions(IMessageReceiver receiver)
         {

@@ -1,0 +1,22 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true
+      }
+    },
+    "logLevel": {
+      "MassTransit": "Debug",
+      "AzureFunction.MassTransit.Demos.ServiceBus": "Information"
+    }
+  },
+  "extensions": {
+    "RabbitMQ": {
+      "prefetchCount": 100,
+      "queueName": "orders",
+      "connectionString": "amqp://guest:guest@rabbitmq.local:5672",
+      "port": 10
+    }
+  }
+}

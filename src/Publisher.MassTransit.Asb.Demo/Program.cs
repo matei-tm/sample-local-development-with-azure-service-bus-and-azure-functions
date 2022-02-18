@@ -1,16 +1,17 @@
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MassTransit;
 using HeroDomain.Contracts;
 using Publisher.MassTransit.Demo.Core;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace Publisher.Mt2Asb.Demo
 {
     public class Program
     {
+        public static AppConfig AppConfig { get; set; }
+
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -18,48 +19,47 @@ namespace Publisher.Mt2Asb.Demo
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddJsonFile("appsettings.json", optional: true);
+                    config.AddEnvironmentVariables();
+
+                    if (args != null)
+                        config.AddCommandLine(args);
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
+
                     services.AddMassTransit(x =>
                     {
-                        x.UsingAzureServiceBus((context, cfg) =>
-                        {
-
-                            cfg.Host("Endpoint=sb://dmsb01.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=/kKBvFzITS/REniOR+kWZpubzmVVj4K7PoaE548rtlU=");
-                            cfg.ConfigureEndpoints(context);
-
-                            var queueEntityName = "OrdersQueue";
-                            cfg.OverrideDefaultBusEndpointQueueName(queueEntityName);
-
-                            var topicEntityName = "OrdersTopic";
-                            cfg.Message<IOrder>(configTopology =>
-                            {
-                                configTopology.SetEntityName(topicEntityName);
-                                var a = configTopology.EntityNameFormatter;
-                            });
-                        });
+                        x.AddBus(ConfigureBus);
                     });
                     services.AddMassTransitHostedService();
+
                     services.AddHostedService<Worker>();
                 });
-    }
 
-    public class OrdersConsumer :
-    IConsumer<Order>
-    {
-        readonly ILogger<OrdersConsumer> _logger;
-
-        public OrdersConsumer(ILogger<OrdersConsumer> logger)
+        private static IBusControl ConfigureBus(IBusRegistrationContext context)
         {
-            _logger = logger;
+            AppConfig = context.GetRequiredService<IOptions<AppConfig>>().Value;
+
+            return Bus.Factory.CreateUsingAzureServiceBus((cfg) =>
+            {
+                cfg.Host(AppConfig.ConnectionString);
+
+                cfg.ConfigureEndpoints(context);
+
+                var queueEntityName = "OrdersQueue";
+                cfg.OverrideDefaultBusEndpointQueueName(queueEntityName);
+
+                var topicEntityName = "OrdersTopic";
+                cfg.Message<IOrder>(configTopology =>
+                {
+                    configTopology.SetEntityName(topicEntityName);
+                    var a = configTopology.EntityNameFormatter;
+                });
+            });
         }
-
-        public Task Consume(ConsumeContext<Order> context)
-        {
-            _logger.LogInformation("Received Text: {Text}", context.Message.OrderId);
-
-            return Task.CompletedTask;
-        }
-
     }
 }
