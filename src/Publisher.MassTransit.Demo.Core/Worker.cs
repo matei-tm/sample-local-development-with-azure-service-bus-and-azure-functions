@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using HeroDomain.Contracts;
@@ -24,12 +24,12 @@ namespace Publisher.MassTransit.Demo.Core
             {
                 if (userAnswer == ConsoleKey.S)
                 {
-                    var s = await _bus.GetSendEndpoint(_bus.Address);                    
-                    await s.Send(GetRandomOrder(isPublished:false));
+                    var s = await _bus.GetSendEndpoint(_bus.Address);
+                    await s.Send(GetRandomOrder(isPublished: false));
                 }
                 else if (userAnswer == ConsoleKey.P)
                 {
-                    await _bus.Publish(GetRandomOrder(isPublished:true));
+                    await _bus.Publish(GetRandomOrder(isPublished: true));
                 }
 
                 WriteInfo();
@@ -42,7 +42,7 @@ namespace Publisher.MassTransit.Demo.Core
         {
             var randomOrderNumber = new Random().Next(0, 100).ToString();
 
-            Console.WriteLine($" new message will be {(isPublished? "Published" : "Sent")} with # {randomOrderNumber}");
+            Console.WriteLine($" new message will be {(isPublished ? "Published to topic" : "Sent to queue")} with # {randomOrderNumber}");
             IOrder order = new Order { OrderId = Guid.NewGuid(), OrderNumber = randomOrderNumber };
 
             return order;
@@ -50,7 +50,7 @@ namespace Publisher.MassTransit.Demo.Core
 
         private static void WriteInfo()
         {
-            Console.WriteLine("Enter the option: [S]end order/[P]ublish/e[X]it");
+            Console.WriteLine("Enter the option: [S]end order to queue/[P]ublish to topic/e[X]it");
         }
     }
 }
