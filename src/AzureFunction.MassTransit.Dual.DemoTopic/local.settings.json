@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "RabbitMQ": "amqp://guest:guest@rabbitmq.local:5672",
+    "AzureWebJobsServiceBus": "Endpoint=sb://yourdemo4dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=*****************************",
+    "ServiceBus": "Endpoint=sb://yourdemo4dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=****************************",
+    "AzureWebJobsEventHub": "",
+    "FUNCTIONS_EXTENSION_VERSION": "~3",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey="
+  }
+}

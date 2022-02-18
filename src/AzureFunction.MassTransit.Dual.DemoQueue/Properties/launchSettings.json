@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AzureFunction.MassTransit.Dual.DemoQueue": {
+      "commandName": "Project",
+      "commandLineArgs": "--p 7074"
+    }
+  }
+}
