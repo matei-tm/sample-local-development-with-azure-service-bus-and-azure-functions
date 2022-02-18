@@ -10,7 +10,7 @@ using MassTransit.WebJobs.RabbitMqIntegration;
 using RabbitMQ.Client.Events;
 #else
 using MassTransit.WebJobs.ServiceBusIntegration;
-using Microsoft.Azure.ServiceBus;
+using Azure.Messaging.ServiceBus;
 #endif
 
 namespace AzureFunction.MassTransit.Demo
@@ -33,7 +33,7 @@ namespace AzureFunction.MassTransit.Demo
             BasicDeliverEventArgs message,
 #else
             [ServiceBusTrigger(OrdersQueueName, Connection = "AzureWebJobsServiceBus")]
-            Message message,
+            ServiceBusReceivedMessage message,
 #endif
 
             CancellationToken cancellationToken)

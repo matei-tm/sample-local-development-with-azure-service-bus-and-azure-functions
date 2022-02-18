@@ -6,12 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit" Version="7.3.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HeroDomain.Contracts\HeroDomain.Contracts.csproj" />
-    <ProjectReference Include="..\submodules\MassTransit\src\MassTransit\MassTransit.csproj" />
   </ItemGroup>
 
 </Project>

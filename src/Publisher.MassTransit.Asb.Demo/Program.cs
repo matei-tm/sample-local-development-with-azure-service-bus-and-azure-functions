@@ -35,7 +35,7 @@ namespace Publisher.Mt2Asb.Demo
                     {
                         x.AddBus(ConfigureBus);
                     });
-                    services.AddMassTransitHostedService();
+                    services.AddHostedService<MassTransitConsoleHostedService>();
 
                     services.AddHostedService<Worker>();
                 });
@@ -46,7 +46,7 @@ namespace Publisher.Mt2Asb.Demo
 
             return Bus.Factory.CreateUsingAzureServiceBus((cfg) =>
             {
-                cfg.Host(AppConfig.ConnectionString);
+                cfg.Host(AppConfig.ServiceBusConnectionString);
 
                 cfg.ConfigureEndpoints(context);
 
@@ -63,3 +63,4 @@ namespace Publisher.Mt2Asb.Demo
         }
     }
 }
+
