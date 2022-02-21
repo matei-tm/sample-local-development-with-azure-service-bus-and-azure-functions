@@ -5,7 +5,7 @@ ARG servicebusmode=LocalDev
 COPY --from=mcr.microsoft.com/dotnet/core/sdk:3.1 /usr/share/dotnet /usr/share/dotnet
 
 COPY . /src/dotnet-function-app
-RUN cd /src/dotnet-function-app/src/AzureFunction.MassTransit.Dual.Demo && \
+RUN cd /src/dotnet-function-app/src/AzureFunction.MassTransit.Dual.DemoQueue && \
     mkdir -p /home/site/wwwroot && \
     dotnet publish *.csproj --output /home/site/wwwroot --configuration $servicebusmode
 
