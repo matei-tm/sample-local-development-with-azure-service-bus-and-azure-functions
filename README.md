@@ -1,3 +1,4 @@
+- [Description](#description)
 - [References](#references)
   - [Nice to read](#nice-to-read)
 - [Azure Setup](#azure-setup)
@@ -21,6 +22,10 @@
       - [Registry test](#registry-test)
     - [to k8s](#to-k8s)
     - [Removing](#removing)
+
+# Description
+
+The current repo serves as a playground to demonstrate how to switch an Azure Service Bus to RabbitMq in the context of an Azure Function and local development environment.
 
 # References
 
