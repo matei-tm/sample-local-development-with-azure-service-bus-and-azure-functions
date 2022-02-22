@@ -8,9 +8,6 @@
     - [Create OrdersSubscription subscription for OrdersTopic](#create-orderssubscription-subscription-for-orderstopic)
   - [Create an App Insights resource](#create-an-app-insights-resource)
 - [Local machine setup](#local-machine-setup)
-  - [RabbitMq](#rabbitmq)
-    - [With Helm](#with-helm)
-    - [With Docker](#with-docker)
   - [Switch to Docker context for Kubernetes](#switch-to-docker-context-for-kubernetes)
   - [Install KEDA](#install-keda)
   - [Install Dashboard](#install-dashboard)
@@ -19,6 +16,11 @@
     - [Setup access](#setup-access)
     - [Refresh the token](#refresh-the-token)
   - [Docker local registry](#docker-local-registry)
+  - [RabbitMq](#rabbitmq)
+    - [In k8s with Helm](#in-k8s-with-helm)
+      - [Deployment](#deployment)
+      - [Forwarding ports to host](#forwarding-ports-to-host)
+    - [In Docker](#in-docker)
   - [Deploy](#deploy)
     - [to registry](#to-registry)
       - [Registry test](#registry-test)
@@ -28,6 +30,13 @@
 # Description
 
 The current repo serves as a playground to demonstrate how to switch an Azure Service Bus to RabbitMq in the context of an Azure Function and local development environment.
+The proposed solution is using:
+- a Kubernetes in Docker infrastructure
+- KEDA for event driven scaling of Azure Functions instances
+- HELM (optional) for deploying RabbitMq to K8s
+- Azure Application Insights (optional) for monitoring
+
+The switching procedure is based on a custom configuration (named LocalDev) that is conditionally processed in the Azure Functions csproj files.
 
 # References
 
@@ -50,42 +59,9 @@ The current repo serves as a playground to demonstrate how to switch an Azure Se
 
 ## Create an App Insights resource
 
-
+If you want to monitor the applications create an App Insights resource and provide the connection information to the configuration files.
 
 # Local machine setup
-
-## RabbitMq
-
-### With Helm
-
-#### Deployment
-
-```
- helm repo add bitnami https://charts.bitnami.com/bitnami
- helm repo update 
- helm install rabbit-deploy --set bitnami/rabbitmq --namespace rabbit
- ```
-
-#### Forwarding ports to host
-
- ```
- kubectl port-forward --namespace rabbit svc/rabbit-deploy-rabbitmq 5672:5672
- kubectl port-forward --namespace rabbit  svc/rabbit-deploy-rabbitmq 15672:15672
-```
-
-Access the dashboard and create the user guest:guest with access on q and t
-
-Connection string amqp://guest:guest@rabbit-deploy-rabbitmq.rabbit:5672
-
-### With Docker
-
-Create a RabbitMq container
-
-```
-docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 -p 5672:5672 rabbitmq:3-management
-```
-
-Connection string amqp://guest:guest@host.docker.internal:5672
 
 ## Switch to Docker context for Kubernetes
 
@@ -152,6 +128,46 @@ https://docs.docker.com/registry/
 ```
 docker run -d -p 5000:5000 --name registry registry:2
 ```
+
+
+## RabbitMq
+
+For the RabbitMq service, two options were provided:
+
+- as k8s deployment using Helm
+- as a Docker container
+
+### In k8s with Helm
+
+#### Deployment
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update 
+helm install rabbit-deploy --set bitnami/rabbitmq --namespace rabbit
+ ```
+
+#### Forwarding ports to host
+
+ ```
+ kubectl port-forward --namespace rabbit svc/rabbit-deploy-rabbitmq 5672:5672
+ kubectl port-forward --namespace rabbit  svc/rabbit-deploy-rabbitmq 15672:15672
+```
+
+Access the dashboard and create the user guest:guest with access on queues and topics
+
+Connection string amqp://guest:guest@rabbit-deploy-rabbitmq.rabbit:5672
+
+### In Docker
+
+Create a RabbitMq container
+
+```
+docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 -p 5672:5672 rabbitmq:3-management
+```
+
+Connection string amqp://guest:guest@host.docker.internal:5672
+
 
 ## Deploy
 
