@@ -9,6 +9,8 @@
   - [Create an App Insights resource](#create-an-app-insights-resource)
 - [Local machine setup](#local-machine-setup)
   - [RabbitMq](#rabbitmq)
+    - [With Helm](#with-helm)
+    - [With Docker](#with-docker)
   - [Switch to Docker context for Kubernetes](#switch-to-docker-context-for-kubernetes)
   - [Install KEDA](#install-keda)
   - [Install Dashboard](#install-dashboard)
@@ -54,11 +56,27 @@ The current repo serves as a playground to demonstrate how to switch an Azure Se
 
 ## RabbitMq
 
+### With Helm
+
+```
+ helm repo add bitnami https://charts.bitnami.com/bitnami
+ helm repu update 
+ helm install rabbit-deploy --set auth.username=guest --set auth.password=guest  bitnami/rabbitmq --namespace rabbit
+```
+
+Access the dashboard and create the user guest:guest with access on q and t
+
+Connection string amqp://guest:guest@rabbit-deploy-rabbitmq.rabbit:5672
+
+### With Docker
+
 Create a RabbitMq container
 
 ```
 docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 -p 5672:5672 rabbitmq:3-management
 ```
+
+Connection string amqp://guest:guest@host.docker.internal:5672
 
 ## Switch to Docker context for Kubernetes
 
@@ -143,7 +161,7 @@ docker pull localhost:5000/af-masstransit-dual-demo/af-masstransit-dual
 ### to k8s
 
 ```
-func kubernetes deploy --name af-masstransit-dual --registry localhost:5000/af-masstransit-dual-demo
+func kubernetes deploy --name af-masstransit-rmq-queue --registry localhost:5000/af-masstransit-dual-demo --namespace rabbit
 ```
 
 ### Removing
