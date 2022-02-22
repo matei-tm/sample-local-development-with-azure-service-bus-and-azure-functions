@@ -35,10 +35,11 @@
     - [Refresh the token](#refresh-the-token)
   - [Docker local registry](#docker-local-registry)
   - [RabbitMq](#rabbitmq)
+    - [In Docker](#in-docker)
     - [In k8s with Helm](#in-k8s-with-helm)
       - [Deployment](#deployment)
       - [Forwarding ports to host](#forwarding-ports-to-host)
-    - [In Docker](#in-docker)
+- [Review and update the configuration files](#review-and-update-the-configuration-files)
 - [Azure functions deployment](#azure-functions-deployment)
   - [Build Docker image](#build-docker-image)
     - [Azure function with ASB endpoint and topic trigger](#azure-function-with-asb-endpoint-and-topic-trigger)
@@ -59,6 +60,9 @@
 # Description
 
 The current repo serves as a playground to demonstrate how to switch an Azure Service Bus to RabbitMq in the context of an Azure Function and local development environment.
+It is trying to solve the lack of a local emulator for Azure Service Bus. The issue is mentioned by Jimmy Bogard in this [article](https://jimmybogard.com/local-development-with-azure-service-bus/).
+It provides a local, completly isolated dev environment for Azure Functions inside local Kubernetes infrastructure.
+
 The proposed solution is using:
 - a Kubernetes in Docker infrastructure
 - KEDA for event driven scaling of Azure Functions instances
@@ -66,6 +70,8 @@ The proposed solution is using:
 - Azure Application Insights (optional) for monitoring
 
 The switching procedure is based on a custom configuration (named LocalDev) that is conditionally processed in the Azure Functions csproj files.
+
+Note: Because RabbitMq does not have an equivalent for the ASB topic, the topics will be simulated as queues (work in progress to switch to exchange and keys)
 
 ## Solution structure
 
@@ -365,12 +371,24 @@ docker run -d -p 5000:5000 --name registry registry:2
 
 ## RabbitMq
 
-For the RabbitMq service, two options were provided:
+For the RabbitMq service, two mutually exclusive options were provided:
 
+- as a Docker container (recommended, with fewer steps)
 - as k8s deployment using Helm
-- as a Docker container
 
 Use that one, that fits better your curiosity.
+
+### In Docker
+
+Create a RabbitMq container
+
+```
+docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 -p 5672:5672 rabbitmq:3-management
+```
+
+Connection string for Azure Functions amqp://guest:guest@host.docker.internal:5672
+Connection string for Publisher amqp://guest:guest@127.0.0.1:5672
+RabbitMq Dashboard http://127.0.0.1:8080/ with username:guest and password:guest
 
 ### In k8s with Helm
 
@@ -381,8 +399,6 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update 
 helm install rabbit-deploy --set bitnami/rabbitmq --namespace rabbit
  ```
-
-
 
 #### Forwarding ports to host
 
@@ -395,15 +411,48 @@ Access the dashboard and create the user guest:guest with access on queues and t
 
 Connection string amqp://guest:guest@rabbit-deploy-rabbitmq.rabbit:5672
 
-### In Docker
 
-Create a RabbitMq container
 
+
+# Review and update the configuration files
+
+Replace the connection strings for ASB/RabbitMq/AppInsights in the following files. Use the values provided in previous steps
+
+```ascii
+.
+├── docker-files
+├── docs
+├── k8s
+└── src
+    ├── AzureFunction.MassTransit.Demo.Core
+    │   └── Consumers
+    ├── AzureFunction.MassTransit.Dual.DemoQueue
+    │   ├── Properties
+    │   ├── host.json
+    │   └── local.settings.json
+    ├── AzureFunction.MassTransit.Dual.DemoTopic
+    │   ├── Properties
+    │   ├── host.json
+    │   └── local.settings.json
+    ├── EndpointCreator.MassTransit.Rmq.Demo
+    │   ├── Properties
+    │   ├── appsettings.Development.json
+    │   ├── appsettings.json
+    │   └── host.json
+    ├── HeroDomain.Contracts
+    ├── Publisher.MassTransit.Asb.Demo
+    │   ├── Properties
+    │   ├── appsettings.Development.json
+    │   └── appsettings.json
+    ├── Publisher.MassTransit.Demo.Core
+    └── Publisher.MassTransit.Rmq.Demo
+        ├── Properties
+        ├── appsettings.Development.json
+        ├── appsettings.json
+        └── host.json
 ```
-docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 -p 5672:5672 rabbitmq:3-management
-```
 
-Connection string amqp://guest:guest@host.docker.internal:5672
+Optional, the secrets for publishers can be provided through development [safe storage](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows) feature.
 
 # Azure functions deployment
 
@@ -514,8 +563,8 @@ Being a local, private registry the host.docker.internal must be added to insecu
 ## Playing and testing
 
 ```
-dotnet build
-dotnet run
+dotnet build src/AzureFunction.Demo.sln --configuration LocalDev
+dotnet build src/AzureFunction.Demo.sln --configuration Debug
 ```
 
 ## Removing k8s resources
