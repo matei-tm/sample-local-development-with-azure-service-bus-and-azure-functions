@@ -58,10 +58,17 @@ The current repo serves as a playground to demonstrate how to switch an Azure Se
 
 ### With Helm
 
+#### Deployment
+
 ```
  helm repo add bitnami https://charts.bitnami.com/bitnami
- helm repu update 
+ helm repo update 
  helm install rabbit-deploy --set bitnami/rabbitmq --namespace rabbit
+ ```
+
+#### Forwarding ports to host
+
+ ```
  kubectl port-forward --namespace rabbit svc/rabbit-deploy-rabbitmq 5672:5672
  kubectl port-forward --namespace rabbit  svc/rabbit-deploy-rabbitmq 15672:15672
 ```
