@@ -61,7 +61,9 @@ The current repo serves as a playground to demonstrate how to switch an Azure Se
 ```
  helm repo add bitnami https://charts.bitnami.com/bitnami
  helm repu update 
- helm install rabbit-deploy --set auth.username=guest --set auth.password=guest  bitnami/rabbitmq --namespace rabbit
+ helm install rabbit-deploy --set bitnami/rabbitmq --namespace rabbit
+ kubectl port-forward --namespace rabbit svc/rabbit-deploy-rabbitmq 5672:5672
+ kubectl port-forward --namespace rabbit  svc/rabbit-deploy-rabbitmq 15672:15672
 ```
 
 Access the dashboard and create the user guest:guest with access on q and t
