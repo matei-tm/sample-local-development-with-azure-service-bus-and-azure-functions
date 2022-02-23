@@ -38,10 +38,6 @@
     - [Refresh the token](#refresh-the-token)
   - [Docker local registry](#docker-local-registry)
   - [RabbitMq](#rabbitmq)
-    - [In Docker](#in-docker)
-    - [In k8s with Helm](#in-k8s-with-helm)
-      - [Deployment](#deployment)
-      - [Forwarding ports to host](#forwarding-ports-to-host)
 - [Review and update the configuration files](#review-and-update-the-configuration-files)
   - [Configuration keys explained](#configuration-keys-explained)
     - [File local.settings.json](#file-localsettingsjson)
@@ -90,7 +86,6 @@ The proposed solution is using:
 - a MassTransit wrapper for [Azure Function RabbitMq trigger](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
 - a Kubernetes in Docker infrastructure
 - KEDA for event driven scaling of Azure Functions instances
-- HELM (optional) for deploying RabbitMq to K8s
 - Azure Application Insights (optional) for monitoring
 
 The switching procedure is based on a custom configuration (named LocalDev) that is conditionally processed in the Azure Functions csproj files.
@@ -414,48 +409,15 @@ docker run -d -p 5000:5000 --name registry registry:2
 
 ## RabbitMq
 
-For the RabbitMq service, two mutually exclusive options were provided:
-
-- as a Docker container (recommended, with fewer steps)
-- as k8s deployment using Helm
-
-Use that one, that fits better your curiosity.
-
-### In Docker
-
-Create a RabbitMq container
+For the RabbitMq service, a Docker container will be used
 
 ```
 docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 -p 5672:5672 rabbitmq:3-management
 ```
 
-Connection string for Azure Functions amqp://guest:guest@host.docker.internal:5672
-Connection string for Publisher amqp://guest:guest@127.0.0.1:5672
-RabbitMq Dashboard http://127.0.0.1:8080/ with username:guest and password:guest
-
-### In k8s with Helm
-
-#### Deployment
-
-```
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update 
-helm install rabbit-deploy --set bitnami/rabbitmq --namespace rabbit
- ```
-
-#### Forwarding ports to host
-
- ```
- kubectl port-forward --namespace rabbit svc/rabbit-deploy-rabbitmq 5672:5672
- kubectl port-forward --namespace rabbit  svc/rabbit-deploy-rabbitmq 15672:15672
-```
-
-Access the dashboard and create the user guest:guest with access on queues and topics
-
-Connection string amqp://guest:guest@rabbit-deploy-rabbitmq.rabbit:5672
-
-
-
+Connection string for Azure Functions will use host.docker.internal amqp://guest:guest@host.docker.internal:5672
+Connection string for Publisher will use localhost 127.0.0.1 ip amqp://guest:guest@127.0.0.1:5672
+To access the RabbitMq Dashboard open http://127.0.0.1:8080/ with username:guest and password:guest
 
 # Review and update the configuration files
 
