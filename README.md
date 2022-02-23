@@ -86,6 +86,7 @@ It is trying to solve the lack of a local emulator for Azure Service Bus. The is
 It provides a local, completly isolated dev environment for Azure Functions inside local Kubernetes infrastructure.
 
 The proposed solution is using:
+- a MassTransit wrapper for [Azure Function RabbitMq trigger](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
 - a Kubernetes in Docker infrastructure
 - KEDA for event driven scaling of Azure Functions instances
 - HELM (optional) for deploying RabbitMq to K8s
@@ -145,7 +146,6 @@ The conditional compilation is done by using #if/#else/#endif preprocessor direc
 - [Jimmy Bogard - Local Development with Azure Service Bus](https://jimmybogard.com/local-development-with-azure-service-bus/)
 - [Chris Patterson - Modern .NET Messaging using MassTransit](https://www.youtube.com/watch?v=jQNQDLv7QmU)
 - [MassTransit Webjobs with RabbitMq](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
-- [MassTransit Demo app](https://github.com/matei-tm-csv/AzureFunction.Demo/tree/develop)
 
 ## Nice to read
 
