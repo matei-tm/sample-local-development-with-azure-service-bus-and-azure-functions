@@ -1,5 +1,9 @@
 - [Description](#description)
   - [Solution structure](#solution-structure)
+    - [Required nuget feed](#required-nuget-feed)
+    - [The dual behavior of the AzureFunction.MassTransit.Dual.Demo* csproj files](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemo-csproj-files)
+    - [The dual behavior of the AzureFunction.MassTransit.Dual.DemoQueue SubmitOrderFunction class](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemoqueue-submitorderfunction-class)
+    - [The dual behavior of the AzureFunction.MassTransit.Dual.DemoTopic SubmitOrderFunction class](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemotopic-submitorderfunction-class)
 - [References](#references)
   - [Nice to read](#nice-to-read)
 - [Prerequisites](#prerequisites)
@@ -24,6 +28,7 @@
     - [Get the Azure Service Bus connection string](#get-the-azure-service-bus-connection-string)
   - [Create an App Insights resource](#create-an-app-insights-resource)
     - [Get the App Insights connection](#get-the-app-insights-connection)
+    - [Get the App Insights instrumentation key](#get-the-app-insights-instrumentation-key)
 - [Local machine setup](#local-machine-setup)
   - [Clone the repo](#clone-the-repo)
   - [Switch to Docker context for Kubernetes](#switch-to-docker-context-for-kubernetes)
@@ -40,6 +45,9 @@
       - [Deployment](#deployment)
       - [Forwarding ports to host](#forwarding-ports-to-host)
 - [Review and update the configuration files](#review-and-update-the-configuration-files)
+  - [Configuration keys explained](#configuration-keys-explained)
+    - [File local.settings.json](#file-localsettingsjson)
+    - [File appsettings*.json](#file-appsettingsjson)
 - [Azure functions deployment](#azure-functions-deployment)
   - [Build Docker image](#build-docker-image)
     - [Azure function with ASB endpoint and topic trigger](#azure-function-with-asb-endpoint-and-topic-trigger)
@@ -54,7 +62,21 @@
     - [Use one of the following commands to deploy](#use-one-of-the-following-commands-to-deploy)
     - [Deploying all](#deploying-all)
     - [Troubleshooting: server gave HTTP response to HTTPS client](#troubleshooting-server-gave-http-response-to-https-client)
+    - [Verify the secrets](#verify-the-secrets)
+      - [ASB Topic Trigger (Mandatory)](#asb-topic-trigger-mandatory)
+      - [ASB Queue Trigger (Mandatory)](#asb-queue-trigger-mandatory)
+      - [RabbitMq Queue Trigger (Optional)](#rabbitmq-queue-trigger-optional)
+      - [RabbitMq Topic Trigger (Optional)](#rabbitmq-topic-trigger-optional)
   - [Playing and testing](#playing-and-testing)
+    - [Build the solution](#build-the-solution)
+    - [Create RabbitMq demo endpoints (Mandatory)](#create-rabbitmq-demo-endpoints-mandatory)
+      - [Verifying the endpoints](#verifying-the-endpoints)
+    - [Play with Azure Service Bus](#play-with-azure-service-bus)
+      - [Send a message and verify](#send-a-message-and-verify)
+      - [Publish a message and verify](#publish-a-message-and-verify)
+    - [Play with RabbitMq](#play-with-rabbitmq)
+      - [Send a message and verify](#send-a-message-and-verify-1)
+      - [Publish a message and verify](#publish-a-message-and-verify-1)
   - [Removing k8s resources](#removing-k8s-resources)
 
 # Description
@@ -95,6 +117,28 @@ Note: Because RabbitMq does not have an equivalent for the ASB topic, the topics
     └───Publisher.MassTransit.Rmq.Demo
         └───Properties
 ```
+### Required nuget feed
+
+The demo is using https://www.myget.org/F/matei-tm/api/v2 feed for the prerelease nugets of MassTransit.WebJobs.Extensions.RabbitMQq
+See the [Nuget.Config](NuGet.Config) file
+
+### The dual behavior of the AzureFunction.MassTransit.Dual.Demo* csproj files
+
+The Azure functions project files are containing package references for both Asb and RabbitMq, but depending on the configuration value, at build time, they will generate a clean assembly.
+
+![fig](./docs/af_proj.png)
+
+### The dual behavior of the AzureFunction.MassTransit.Dual.DemoQueue SubmitOrderFunction class
+
+The conditional compilation is done by using #if/#else/#endif preprocessor directives
+
+![fig](./docs/queue_trigger_class.png)
+
+### The dual behavior of the AzureFunction.MassTransit.Dual.DemoTopic SubmitOrderFunction class
+
+The conditional compilation is done by using #if/#else/#endif preprocessor directives
+
+![fig](./docs/topic_trigger_class.png)
 
 # References
 
@@ -283,10 +327,18 @@ az monitor app-insights component create --app demoApp --location westeurope --k
 ### Get the App Insights connection 
 
 ```bash
+# bash/zsh
 az monitor app-insights component show --app demoApp --resource-group k8s | grep connection
 ```
 
 ![image](docs/az_appins_key.png)
+
+### Get the App Insights instrumentation key 
+
+```bash
+# bash/zsh
+az monitor app-insights component show --app demoApp --resource-group k8s | grep instrumentationKey
+```
 
 # Local machine setup
 
@@ -329,7 +381,8 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/a
 
 If the port 8001 is captured by another app, get the app name, verify it and close/kill it.
 
-```
+```Powershell
+# Powershell
 $theCulpritPort="8001"
 Get-NetTCPConnection -LocalPort $theCulpritPort `
 | Select-Object -Property "OwningProcess", @{'Name' = 'ProcessName';'Expression'={(Get-Process -Id $_.OwningProcess).Name}} `
@@ -454,6 +507,27 @@ Replace the connection strings for ASB/RabbitMq/AppInsights in the following fil
 
 Optional, the secrets for publishers can be provided through development [safe storage](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows) feature.
 
+## Configuration keys explained
+
+### File local.settings.json
+
+| Key         | Description     | Retrieve section |
+|--------------|-----------|------------|
+| APPINSIGHTS_INSTRUMENTATIONKEY | App Insights instrumentation key      | [view](#get-the-app-insights-instrumentation-key)        |
+| APPLICATIONINSIGHTS_CONNECTION_STRING      | App Insights connection string  | [view](#get-the-app-insights-connection)       |
+| AzureWebJobsServiceBus      | the ASB endpoint for the Azure Function trigger  | [view](#get-the-azure-service-bus-connection-string)       |
+| ServiceBus      | the ASB endpoint for the consumers configured to handle the message received by the trigger. The key name is the default value requested by MassTransit  | [view](#get-the-azure-service-bus-connection-string)      |
+
+
+### File appsettings*.json
+
+ Key         | Description     | Retrieve section |
+|--------------|-----------|------------|
+| ApplicationInsights.InstrumentationKey | App Insights instrumentation key      | [view]
+| AppConfig.ServiceBusConnectionString      | the ASB endpoint to publish/send messages  | [view](#get-the-azure-service-bus-connection-string)       |
+
+Other keys can stay with the current values
+
 # Azure functions deployment
 
 ## Build Docker image
@@ -557,15 +631,134 @@ func kubernetes deploy --name af-masstransit-rmq-queue --image-name host.docker.
 
 Being a local, private registry the host.docker.internal must be added to insecure-registries section in Docker config file.
 
-![fix](docs/registryerrorfix.png.png)
+![fix](docs/registryerrorfix.png)
 
+
+### Verify the secrets
+
+The keys contained by local.settings.json are deployed as secrets into k8s.
+
+![image](docs/secrets.png)
+
+Check the stored values to be in sync with the collected values from az cli output. Check [File local.settings.json](#file-localsettingsjson) section for more info
+
+#### ASB Topic Trigger (Mandatory)
+
+Go to http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/secret/rabbit/af-masstransit-asb-topic?namespace=rabbit and verify the following keys:
+
+- APPINSIGHTS_INSTRUMENTATIONKEY
+- APPLICATIONINSIGHTS_CONNECTION_STRING
+- AzureWebJobsServiceBus - the ASB endpoint for the Azure Function trigger
+- ServiceBus - the ASB endpoint for the consumers configured by MassTransit
+
+#### ASB Queue Trigger (Mandatory)
+
+Go to http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/secret/rabbit/af-masstransit-asb-queue?namespace=rabbit and verify the following keys:
+
+- APPINSIGHTS_INSTRUMENTATIONKEY
+- APPLICATIONINSIGHTS_CONNECTION_STRING
+- AzureWebJobsServiceBus - the ASB endpoint for the Azure Function trigger
+- ServiceBus - the ASB endpoint for the consumers configured by MassTransit
+
+#### RabbitMq Queue Trigger (Optional)
+
+Go to http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/secret/rabbit/af-masstransit-rmq-queue?namespace=rabbit and verify the following keys:
+
+- APPINSIGHTS_INSTRUMENTATIONKEY
+- APPLICATIONINSIGHTS_CONNECTION_STRING
+
+#### RabbitMq Topic Trigger (Optional)
+
+Go to http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/secret/rabbit/af-masstransit-rmq-topic?namespace=rabbit and verify the following keys:
+
+- APPINSIGHTS_INSTRUMENTATIONKEY
+- APPLICATIONINSIGHTS_CONNECTION_STRING
 
 ## Playing and testing
 
-```
-dotnet build src/AzureFunction.Demo.sln --configuration LocalDev
+
+### Build the solution
+
+You can build any of Debug/Release/LocalDev configuration
+
+```bash
 dotnet build src/AzureFunction.Demo.sln --configuration Debug
 ```
+
+### Create RabbitMq demo endpoints (Mandatory)
+
+Run the following application in order to create the queues and exchanges needed by the demo.
+
+```
+./src/EndpointCreator.MassTransit.Rmq.Demo/bin/Debug/net6.0/EndpointCreator.MassTransit.Rmq.Demo.exe
+```
+
+#### Verifying the endpoints
+
+Open http://127.0.0.1:8080/#/queues (user:guest, pwd: guest) and verify the queues to be as in the following figure
+
+![image](docs/rmq_endpoints.png)
+
+### Play with Azure Service Bus
+
+In a new terminal run the following commands
+
+```bash
+cd src/Publisher.MassTransit.Asb.Demo/bin/Debug/net6.0
+./Publisher.MassTransit.Asb.Demo.exe
+```
+#### Send a message and verify
+
+Sending a message will use the OrdersQueue queue
+
+![image](docs/asb_send.png)
+
+Check in k8s dashboard on Pods section if a replica af-masstransit-asb-**queue**-* is launched (the launcher can have a 30 sec delay).
+Open the pod and check the logs.
+
+![image](docs/asb_receive_from_send.png)
+
+#### Publish a message and verify
+
+Publishing a message will use the OrdersTopic topic
+
+![image](docs/asb_publish.png)
+
+Check in k8s dashboard on Pods section if a replica af-masstransit-asb-**topic**-* is launched (the launcher can have a 30 sec delay).
+Open the pod and check the logs.
+
+![image](docs/asb_receive_from_publish.png)
+
+### Play with RabbitMq
+
+In a new dos_command/powershell terminal run the following commands
+
+```bash
+cd src/Publisher.MassTransit.Rmq.Demo/bin/Debug/net6.0
+./Publisher.MassTransit.Rmq.Demo.exe
+```
+
+#### Send a message and verify
+
+Sending a message will use the OrdersQueue
+
+![image](docs/rmq_send.png)
+
+Check in k8s dashboard on Pods section if a replica af-masstransit-rmq-queue-* is launched (the launcher can have a 30 sec delay).
+Open the pod and check the logs.
+
+![image](docs/rmq_receive_from_send.png)
+
+#### Publish a message and verify
+
+Publishing a message will use the OrdersTopic queue (no topic equivalent in RabbitMq)
+
+![image](docs/rmq_publish.png)
+
+Check in k8s dashboard on Pods section if a replica af-masstransit-rmq-**topic**p is launched (the launcher can have a 30 sec delay).
+Open the pod and check the logs.
+
+![image](docs/rmq_receive_from_publish.png)
 
 ## Removing k8s resources
 

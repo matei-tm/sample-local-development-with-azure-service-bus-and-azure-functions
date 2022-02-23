@@ -10,32 +10,38 @@ namespace Publisher.MassTransit.Demo.Core
     public class Worker : BackgroundService
     {
         readonly IBus _bus;
+        private readonly IHostApplicationLifetime _host;
 
-        public Worker(IBus bus)
+        public Worker(IHostApplicationLifetime host, IBus bus)
         {
+            _host = host;
             _bus = bus;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             WriteInfo();
-            var userAnswer = Console.ReadKey().Key;
-            while (userAnswer != ConsoleKey.X)
+            var userAnswer = Console.ReadKey(true);
+            while (userAnswer.Key != ConsoleKey.X)
             {
-                if (userAnswer == ConsoleKey.S)
+                if (userAnswer.Key == ConsoleKey.S)
                 {
                     var s = await _bus.GetSendEndpoint(_bus.Address);
                     await s.Send(GetRandomOrder(isPublished: false));
                 }
-                else if (userAnswer == ConsoleKey.P)
+                else if (userAnswer.Key == ConsoleKey.P)
                 {
                     await _bus.Publish(GetRandomOrder(isPublished: true));
                 }
 
                 WriteInfo();
-                userAnswer = Console.ReadKey().Key;
+                userAnswer = Console.ReadKey(true);
             }
 
+            Console.WriteLine("The demo will exit.");
+            await Task.Delay(1000, stoppingToken);
+
+            _host.StopApplication();
         }
 
         private static IOrder GetRandomOrder(bool isPublished)
