@@ -4,8 +4,6 @@
     - [The dual behavior of the AzureFunction.MassTransit.Dual.Demo* csproj files](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemo-csproj-files)
     - [The dual behavior of the AzureFunction.MassTransit.Dual.DemoQueue SubmitOrderFunction class](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemoqueue-submitorderfunction-class)
     - [The dual behavior of the AzureFunction.MassTransit.Dual.DemoTopic SubmitOrderFunction class](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemotopic-submitorderfunction-class)
-- [References](#references)
-  - [Nice to read](#nice-to-read)
 - [Prerequisites](#prerequisites)
   - [Mandatory: An Azure subscription](#mandatory-an-azure-subscription)
   - [Mandatory: Azure CLI (az)](#mandatory-azure-cli-az)
@@ -78,6 +76,9 @@
       - [Send a message and verify](#send-a-message-and-verify-1)
       - [Publish a message and verify](#publish-a-message-and-verify-1)
   - [Removing k8s resources](#removing-k8s-resources)
+- [References](#references)
+  - [Nice to read](#nice-to-read)
+  - [Automation](#automation)
 
 # Description
 
@@ -86,6 +87,7 @@ It is trying to solve the lack of a local emulator for Azure Service Bus. The is
 It provides a local, completly isolated dev environment for Azure Functions inside local Kubernetes infrastructure.
 
 The proposed solution is using:
+- a MassTransit wrapper for [Azure Function RabbitMq trigger](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
 - a Kubernetes in Docker infrastructure
 - KEDA for event driven scaling of Azure Functions instances
 - HELM (optional) for deploying RabbitMq to K8s
@@ -119,7 +121,7 @@ Note: Because RabbitMq does not have an equivalent for the ASB topic, the topics
 ```
 ### Required nuget feed
 
-The demo is using https://www.myget.org/F/matei-tm/api/v2 feed for the prerelease nugets of MassTransit.WebJobs.Extensions.RabbitMQq
+The demo is using https://www.myget.org/F/matei-tm/api/v2 feed for the prerelease nugets of MassTransit.WebJobs.Extensions.RabbitMQ
 See the [Nuget.Config](NuGet.Config) file
 
 ### The dual behavior of the AzureFunction.MassTransit.Dual.Demo* csproj files
@@ -139,18 +141,6 @@ The conditional compilation is done by using #if/#else/#endif preprocessor direc
 The conditional compilation is done by using #if/#else/#endif preprocessor directives
 
 ![fig](./docs/topic_trigger_class.png)
-
-# References
-
-- [Jimmy Bogard - Local Development with Azure Service Bus](https://jimmybogard.com/local-development-with-azure-service-bus/)
-- [Chris Patterson - Modern .NET Messaging using MassTransit](https://www.youtube.com/watch?v=jQNQDLv7QmU)
-- [MassTransit Webjobs with RabbitMq](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
-- [MassTransit Demo app](https://github.com/matei-tm-csv/AzureFunction.Demo/tree/develop)
-
-## Nice to read
-
-- [Application Insights for Worker Service applications](https://docs.microsoft.com/en-us/azure/azure-monitor/app/worker-service)
-
 
 # Prerequisites 
 
@@ -776,4 +766,17 @@ for i in {0..1}; do
 done;
 ```
 
+# References
 
+- [Jimmy Bogard - Local Development with Azure Service Bus](https://jimmybogard.com/local-development-with-azure-service-bus/)
+- [Chris Patterson - Modern .NET Messaging using MassTransit](https://www.youtube.com/watch?v=jQNQDLv7QmU)
+- [MassTransit Webjobs with RabbitMq](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
+
+## Nice to read
+
+- [Application Insights for Worker Service applications](https://docs.microsoft.com/en-us/azure/azure-monitor/app/worker-service)
+
+## Automation
+
+- [Azure DevOps pipelines](https://matei-tm.visualstudio.com/AzureFunctionsWithMassTransit/_build)
+- [Custom nuget packages](https://www.myget.org/feed/Packages/matei-tm)
