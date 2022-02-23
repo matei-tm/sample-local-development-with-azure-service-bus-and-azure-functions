@@ -51,10 +51,21 @@ namespace EndpointCreator.Mt2Rmq.Demo
 
     public class Worker : BackgroundService
     {
+        private readonly IHostApplicationLifetime _host;
+
+        public Worker(IHostApplicationLifetime host)
+        {
+            _host = host;
+        }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("The program exited");
+            Console.WriteLine("Give RabbitMq a chance to create demo queues. The application will close in 5 seconds");
 
+            await Task.Delay(5000, stoppingToken);
+
+            Console.WriteLine("The RabbitMq demo setup is finished. Nothing else to process.");
+
+            _host.StopApplication();
             await Task.CompletedTask;
         }
     }
