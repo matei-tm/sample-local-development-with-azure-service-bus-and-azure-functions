@@ -4,8 +4,6 @@
     - [The dual behavior of the AzureFunction.MassTransit.Dual.Demo* csproj files](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemo-csproj-files)
     - [The dual behavior of the AzureFunction.MassTransit.Dual.DemoQueue SubmitOrderFunction class](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemoqueue-submitorderfunction-class)
     - [The dual behavior of the AzureFunction.MassTransit.Dual.DemoTopic SubmitOrderFunction class](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemotopic-submitorderfunction-class)
-- [References](#references)
-  - [Nice to read](#nice-to-read)
 - [Prerequisites](#prerequisites)
   - [Mandatory: An Azure subscription](#mandatory-an-azure-subscription)
   - [Mandatory: Azure CLI (az)](#mandatory-azure-cli-az)
@@ -78,6 +76,9 @@
       - [Send a message and verify](#send-a-message-and-verify-1)
       - [Publish a message and verify](#publish-a-message-and-verify-1)
   - [Removing k8s resources](#removing-k8s-resources)
+- [References](#references)
+  - [Nice to read](#nice-to-read)
+  - [Automation](#automation)
 
 # Description
 
@@ -140,17 +141,6 @@ The conditional compilation is done by using #if/#else/#endif preprocessor direc
 The conditional compilation is done by using #if/#else/#endif preprocessor directives
 
 ![fig](./docs/topic_trigger_class.png)
-
-# References
-
-- [Jimmy Bogard - Local Development with Azure Service Bus](https://jimmybogard.com/local-development-with-azure-service-bus/)
-- [Chris Patterson - Modern .NET Messaging using MassTransit](https://www.youtube.com/watch?v=jQNQDLv7QmU)
-- [MassTransit Webjobs with RabbitMq](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
-
-## Nice to read
-
-- [Application Insights for Worker Service applications](https://docs.microsoft.com/en-us/azure/azure-monitor/app/worker-service)
-
 
 # Prerequisites 
 
@@ -776,4 +766,17 @@ for i in {0..1}; do
 done;
 ```
 
+# References
 
+- [Jimmy Bogard - Local Development with Azure Service Bus](https://jimmybogard.com/local-development-with-azure-service-bus/)
+- [Chris Patterson - Modern .NET Messaging using MassTransit](https://www.youtube.com/watch?v=jQNQDLv7QmU)
+- [MassTransit Webjobs with RabbitMq](https://github.com/matei-tm/MassTransit/tree/webjobs-rabbitmq-integration)
+
+## Nice to read
+
+- [Application Insights for Worker Service applications](https://docs.microsoft.com/en-us/azure/azure-monitor/app/worker-service)
+
+## Automation
+
+- [Azure DevOps pipelines](https://matei-tm.visualstudio.com/AzureFunctionsWithMassTransit/_build)
+- [Custom nuget packages](https://www.myget.org/feed/Packages/matei-tm)
