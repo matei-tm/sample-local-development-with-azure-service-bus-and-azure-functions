@@ -119,7 +119,7 @@ Note: Because RabbitMq does not have an equivalent for the ASB topic, the topics
 ```
 ### Required nuget feed
 
-The demo is using https://www.myget.org/F/matei-tm/api/v2 feed for the prerelease nugets of MassTransit.WebJobs.Extensions.RabbitMQq
+The demo is using https://www.myget.org/F/matei-tm/api/v2 feed for the prerelease nugets of MassTransit.WebJobs.Extensions.RabbitMQ
 See the [Nuget.Config](NuGet.Config) file
 
 ### The dual behavior of the AzureFunction.MassTransit.Dual.Demo* csproj files

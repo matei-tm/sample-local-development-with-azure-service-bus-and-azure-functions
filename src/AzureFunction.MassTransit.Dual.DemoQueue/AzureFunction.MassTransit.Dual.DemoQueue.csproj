@@ -15,7 +15,7 @@
         <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
         <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="1.2.0" />
         <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.6" />
-        <PackageReference Include="MassTransit.WebJobs.Extensions.RabbitMQq" Version="7.3.1-alpha1" />
+        <PackageReference Include="MassTransit.WebJobs.Extensions.RabbitMQ" Version="7.3.1-alpha2" />
       </ItemGroup>
     </When>
     <Otherwise>
