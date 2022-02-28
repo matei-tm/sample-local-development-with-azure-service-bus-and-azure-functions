@@ -1,4 +1,5 @@
 - [Description](#description)
+  - [Solution diagram](#solution-diagram)
   - [Solution structure](#solution-structure)
     - [Required nuget feed](#required-nuget-feed)
     - [The dual behavior of the AzureFunction.MassTransit.Dual.Demo* csproj files](#the-dual-behavior-of-the-azurefunctionmasstransitdualdemo-csproj-files)
@@ -94,6 +95,10 @@ The proposed solution is using:
 The switching procedure is based on a custom configuration (named LocalDev) that is conditionally processed in the Azure Functions csproj files.
 
 Note: Because RabbitMq does not have an equivalent for the ASB topic, the topics will be simulated as queues (work in progress to switch to exchange and keys)
+
+## Solution diagram
+
+![diagram](docs/diagram.drawio.png)
 
 ## Solution structure
 
