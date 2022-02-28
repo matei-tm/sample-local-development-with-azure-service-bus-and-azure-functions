@@ -62,6 +62,7 @@
       - [RabbitMq Queue Trigger (Optional)](#rabbitmq-queue-trigger-optional)
       - [RabbitMq Topic Trigger (Optional)](#rabbitmq-topic-trigger-optional)
   - [Playing and testing](#playing-and-testing)
+    - [Setting the publisher environment](#setting-the-publisher-environment)
     - [Build the solution](#build-the-solution)
     - [Create RabbitMq demo endpoints (Mandatory)](#create-rabbitmq-demo-endpoints-mandatory)
       - [Verifying the endpoints](#verifying-the-endpoints)
@@ -71,7 +72,9 @@
     - [Play with RabbitMq](#play-with-rabbitmq)
       - [Send a message and verify](#send-a-message-and-verify-1)
       - [Publish a message and verify](#publish-a-message-and-verify-1)
+- [Cleaning (Optional)](#cleaning-optional)
   - [Removing k8s resources](#removing-k8s-resources)
+  - [Removing the Azure resources](#removing-the-azure-resources)
 - [References](#references)
   - [Nice to read](#nice-to-read)
   - [Automation](#automation)
@@ -108,10 +111,8 @@ Note: Because RabbitMq does not have an equivalent for the ASB topic, the topics
     ├───EndpointCreator.MassTransit.Rmq.Demo
     │   └───Properties
     ├───HeroDomain.Contracts
-    ├───Publisher.MassTransit.Asb.Demo
-    │   └───Properties
     ├───Publisher.MassTransit.Demo.Core
-    └───Publisher.MassTransit.Rmq.Demo
+    └───Publisher.MassTransit.Dual.Demo
         └───Properties
 ```
 ### Required nuget feed
@@ -450,7 +451,7 @@ Replace the connection strings for ASB/RabbitMq/AppInsights in the following fil
     │   ├── appsettings.Development.json
     │   └── appsettings.json
     ├── Publisher.MassTransit.Demo.Core
-    └── Publisher.MassTransit.Rmq.Demo
+    └── Publisher.MassTransit.Dual.Demo
         ├── Properties
         ├── appsettings.Development.json
         ├── appsettings.json
@@ -475,8 +476,8 @@ Optional, the secrets for publishers can be provided through development [safe s
 
  Key         | Description     | Retrieve section |
 |--------------|-----------|------------|
-| ApplicationInsights.InstrumentationKey | App Insights instrumentation key      | [view]
-| AppConfig.ServiceBusConnectionString      | the ASB endpoint to publish/send messages  | [view](#get-the-azure-service-bus-connection-string)       |
+| ApplicationInsights.InstrumentationKey | App Insights instrumentation key      | [view](#get-the-app-insights-instrumentation-key)  |
+| AppConfig-ServiceBus.ServiceBusConnectionString      | the ASB endpoint to publish/send messages  | [view](#get-the-azure-service-bus-connection-string)       |
 
 Other keys can stay with the current values
 
@@ -628,6 +629,32 @@ Go to http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/http
 
 ## Playing and testing
 
+On the publisher side an environment variable named RABBITMQ_ENABLED is controlling the behaviour
+
+### Setting the publisher environment
+
+The RABBITMQ_ENABLED environment variable can take two values, true or false. If not set the bus will be configured with Azure Service Bus.
+
+- With Powershell
+
+  ```powershell
+  # Powershell
+  $env:RABBITMQ_ENABLED = "true"
+  ```
+
+- With DOS Command line
+
+  ```DOS
+  rem DOS Command line
+  SET RABBITMQ_ENABLED=true
+  ```
+
+- With Bash/Zsh
+  
+  ```bash
+  # bash/zsh
+  export RABBITMQ_ENABLED=true
+  ```
 
 ### Build the solution
 
@@ -656,8 +683,10 @@ Open http://127.0.0.1:8080/#/queues (user:guest, pwd: guest) and verify the queu
 In a new terminal run the following commands
 
 ```bash
-cd src/Publisher.MassTransit.Asb.Demo/bin/Debug/net6.0
-./Publisher.MassTransit.Asb.Demo.exe
+# bash/zsh (for other terminals change the following line with the proper command from Setting the publisher environment section )
+export RABBITMQ_ENABLED=false
+cd src/Publisher.MassTransit.Dual.Demo/bin/Debug/net6.0
+./Publisher.MassTransit.Dual.Demo.exe
 ```
 #### Send a message and verify
 
@@ -686,8 +715,10 @@ Open the pod and check the logs.
 In a new dos_command/powershell terminal run the following commands
 
 ```bash
-cd src/Publisher.MassTransit.Rmq.Demo/bin/Debug/net6.0
-./Publisher.MassTransit.Rmq.Demo.exe
+# bash/zsh (for other terminals change the following line with the proper command from Setting the publisher environment section )
+export RABBITMQ_ENABLED=true
+cd src/Publisher.MassTransit.Dual.Demo/bin/Debug/net6.0
+./Publisher.MassTransit.Dual.Demo.exe
 ```
 
 #### Send a message and verify
@@ -712,9 +743,13 @@ Open the pod and check the logs.
 
 ![image](docs/rmq_receive_from_publish.png)
 
+# Cleaning (Optional)
+
+The demo is complete. Use the following hints to clean the local and cloud environments.
+
 ## Removing k8s resources
 
-If you need to clean everything, use the following command
+If you need to clean the local kubernetes, use the following command
 
 ```bash
 torq=( topic queue )
@@ -726,6 +761,14 @@ for i in {0..1}; do
     kubectl delete secret af-masstransit-"${asborrmq[$j]}"-"${torq[$i]}" --namespace rabbit ; 
   done; 
 done;
+```
+
+## Removing the Azure resources
+
+If you need to purge all Azure resources, delete the resource group
+
+```
+az group delete -n k8s
 ```
 
 # References

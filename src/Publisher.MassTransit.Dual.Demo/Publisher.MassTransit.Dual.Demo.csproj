@@ -7,25 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="host.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="host.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MassTransit" Version="7.3.1" />
-    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="7.3.1" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.1" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.13.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HeroDomain.Contracts\HeroDomain.Contracts.csproj" />
     <ProjectReference Include="..\Publisher.MassTransit.Demo.Core\Publisher.MassTransit.Demo.Core.csproj" />
   </ItemGroup>
 

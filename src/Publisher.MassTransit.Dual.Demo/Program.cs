@@ -5,13 +5,12 @@ using HeroDomain.Contracts;
 using Publisher.MassTransit.Demo.Core;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Publisher.Mt2Asb.Demo
 {
     public class Program
     {
-        public static AppConfig AppConfig { get; set; }
-
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -39,12 +38,27 @@ namespace Publisher.Mt2Asb.Demo
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
+                    var rabbitMqEnabled = Environment.GetEnvironmentVariable("RABBITMQ_ENABLED");
 
-                    services.AddMassTransit(x =>
+                    if (rabbitMqEnabled == "true")
                     {
-                        x.AddBus(ConfigureBus);
-                    });
+                        services.Configure<AppConfigRabbitMq>(hostContext.Configuration.GetSection("AppConfig-RabbitMq"));
+
+                        services.AddMassTransit(x =>
+                        {
+                            x.AddBus(ConfigureBusForRabbitMq);
+                        });
+                    }
+                    else
+                    {
+                        services.Configure<AppConfigServiceBus>(hostContext.Configuration.GetSection("AppConfig-AzureServiceBus"));
+
+                        services.AddMassTransit(x =>
+                        {
+                            x.AddBus(ConfigureBusForAzureServiceBus);
+                        });
+                    }
+
                     services.AddHostedService<MassTransitConsoleHostedService>();
 
                     services.AddHostedService<Worker>();
@@ -52,13 +66,13 @@ namespace Publisher.Mt2Asb.Demo
                     services.AddApplicationInsightsTelemetryWorkerService();
                 });
 
-        private static IBusControl ConfigureBus(IBusRegistrationContext context)
+        private static IBusControl ConfigureBusForAzureServiceBus(IBusRegistrationContext context)
         {
-            AppConfig = context.GetRequiredService<IOptions<AppConfig>>().Value;
+            var appConfig = context.GetRequiredService<IOptions<AppConfigServiceBus>>().Value;
 
             return Bus.Factory.CreateUsingAzureServiceBus((cfg) =>
             {
-                cfg.Host(AppConfig.ServiceBusConnectionString);
+                cfg.Host(appConfig.ServiceBusConnectionString);
 
                 cfg.ConfigureEndpoints(context);
 
@@ -71,6 +85,37 @@ namespace Publisher.Mt2Asb.Demo
                     configTopology.SetEntityName(topicEntityName);
                     var a = configTopology.EntityNameFormatter;
                 });
+            });
+        }
+
+        private static IBusControl ConfigureBusForRabbitMq(IBusRegistrationContext context)
+        {
+            var appConfig = context.GetRequiredService<IOptions<AppConfigRabbitMq>>().Value;
+
+            return Bus.Factory.CreateUsingRabbitMq((cfg) =>
+            {
+                cfg.Host(appConfig.Host, appConfig.VirtualHost,
+                    h =>
+                    {
+                        h.Username(appConfig.Username);
+                        h.Password(appConfig.Password);
+                    }
+                );
+
+                cfg.ConfigureEndpoints(context);
+
+                var queueEntityName = "OrdersQueue";
+                cfg.OverrideDefaultBusEndpointQueueName(queueEntityName);
+
+                var topicEntityName = "OrdersTopic";
+                cfg.Message<IOrder>(configTopology =>
+                {
+                    configTopology.SetEntityName(topicEntityName);
+                    var a = configTopology.EntityNameFormatter;
+                });
+
+                cfg.Durable = true;
+                cfg.AutoDelete = false;
             });
         }
     }

@@ -1,6 +1,6 @@
-﻿namespace Publisher.Mt2Rmq.Demo
+﻿namespace Publisher.Mt2Asb.Demo
 {
-    public class AppConfig
+    public class AppConfigRabbitMq
     {
         public string Host { get; set; }
         public string VirtualHost { get; set; }

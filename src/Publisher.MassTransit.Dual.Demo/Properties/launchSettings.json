@@ -1,0 +1,20 @@
+﻿{
+  "profiles": {
+    "GettingStartedWithASB": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "RABBITMQ_ENABLED": "false"
+      }
+    },
+    "GettingStartedWithRabbitMq": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "RABBITMQ_ENABLED": "true"
+      }
+    }
+  }
+}
