@@ -76,6 +76,7 @@
 - [Cleaning (Optional)](#cleaning-optional)
   - [Removing k8s resources](#removing-k8s-resources)
   - [Removing the Azure resources](#removing-the-azure-resources)
+- [Credits](#credits)
 - [References](#references)
   - [Nice to read](#nice-to-read)
   - [Automation](#automation)
@@ -775,6 +776,11 @@ If you need to purge all Azure resources, delete the resource group
 ```
 az group delete -n k8s
 ```
+
+# Credits
+
+Inspired by Chris Patterson's (@phatboyg) Azure Function with MassTransit sample https://github.com/MassTransit/Sample-AzureFunction/tree/master/src/Sample.AzureFunction. Lots of the basic structure of the code is thanks to this.
+The current work is extending the sample with an implementation for RabbitMq.
 
 # References
 
